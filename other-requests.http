@@ -66,4 +66,9 @@ Content-Type: application/json
   "multiplayer": true
 }
 
+### Generating event load for Game 1234
+
+POST http://localhost:8080/rental/load/1234?amount=1000
+Content-Type: application/json
+
 ###

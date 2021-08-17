@@ -75,6 +75,19 @@ class GameRentalController {
         return commandGateway.send(new ReturnGameCommand(identifier, returner));
     }
 
+    @PostMapping("/load/{identifier}")
+    public Flux<Void> constructRentalLoad(@PathVariable("identifier") String identifier,
+                                          @RequestParam("amount") int amount) {
+        Flux<Void> subscription = Flux.empty();
+        int increments = 0;
+        do {
+            subscription = subscription.concatWith(commandGateway.send(new RentGameCommand(identifier, "Load")))
+                                       .concatWith(commandGateway.send(new ReturnGameCommand(identifier, "Load")));
+            increments++;
+        } while (amount >= increments);
+        return subscription;
+    }
+
     @GetMapping("/{identifier}")
     public Mono<Game> findGame(@PathVariable("identifier") String identifier) {
         return queryGateway.query(new FindGameQuery(identifier), Game.class);
