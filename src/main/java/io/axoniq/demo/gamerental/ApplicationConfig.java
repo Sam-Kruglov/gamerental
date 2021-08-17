@@ -7,8 +7,13 @@ import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.distributed.AnnotationRoutingStrategy;
 import org.axonframework.commandhandling.distributed.RoutingStrategy;
 import org.axonframework.commandhandling.distributed.UnresolvedRoutingKeyPolicy;
+import org.axonframework.common.caching.Cache;
+import org.axonframework.common.caching.WeakReferenceCache;
 import org.axonframework.config.EventProcessingConfigurer;
 import org.axonframework.eventhandling.EventBus;
+import org.axonframework.eventsourcing.EventCountSnapshotTriggerDefinition;
+import org.axonframework.eventsourcing.SnapshotTriggerDefinition;
+import org.axonframework.eventsourcing.Snapshotter;
 import org.axonframework.messaging.Message;
 import org.axonframework.messaging.interceptors.LoggingInterceptor;
 import org.axonframework.queryhandling.QueryBus;
@@ -71,5 +76,15 @@ public class ApplicationConfig {
     public void configureLoggingInterceptorFor(QueryBus queryBus, LoggingInterceptor<Message<?>> loggingInterceptor) {
         queryBus.registerDispatchInterceptor(loggingInterceptor);
         queryBus.registerHandlerInterceptor(loggingInterceptor);
+    }
+
+    @Bean
+    public SnapshotTriggerDefinition gameSnapshotTrigger(Snapshotter snapshotter) {
+        return new EventCountSnapshotTriggerDefinition(snapshotter, 50);
+    }
+
+    @Bean
+    public Cache gameCache() {
+        return new WeakReferenceCache();
     }
 }

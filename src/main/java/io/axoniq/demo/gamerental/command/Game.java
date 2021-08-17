@@ -22,7 +22,10 @@ import java.util.Set;
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Profile("command")
-@Aggregate
+@Aggregate(
+        snapshotTriggerDefinition = "gameSnapshotTrigger",
+        cache = "gameCache"
+)
 class Game {
 
     @AggregateIdentifier
